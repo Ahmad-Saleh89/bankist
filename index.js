@@ -99,6 +99,7 @@ calcDisplayBalance(account1.movements);
 // Note:  0 is the inital value - the 2nd parameter of reduce method
 // array.reduce(function(acc, currentValue, currentIndex, arr), initialValue)
 
+// filter - map - reduce
 const calcDisplaySummary = function(movements) {
   const incomes = movements
     .filter(mov => mov > 0)
@@ -120,8 +121,15 @@ const calcDisplaySummary = function(movements) {
 };
 calcDisplaySummary(account1.movements);
 
-const max = Math.max(...account1.movements);
-console.log(max);
+// find() method returns the first element that passes a test
+const account = accounts.find(acct => acct.owner === "Jessica Davis");
+console.log(account);
+
+// Event Handler:
+// Login 
+
+// const max = Math.max(...account1.movements);
+// console.log(max);
 
 /////////////////////////////////////////////////
 // LECTURES
