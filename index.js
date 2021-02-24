@@ -62,14 +62,27 @@ const inputLoanAmount = document.querySelector(".form__input--loan-amount");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
+const createUsername = function(accounts) {
+  accounts.forEach(account => {
+    // Create new property 'username' for each
+    account.username = account.owner
+      .toLowerCase()
+      .split(" ")
+      .map(word => word[0])
+      .join("");
+  });
+};
+createUsername(accounts);
+
 const displayMovments = function(movements) {
+  containerMovements.innerHTML = "";
   movements.forEach(function(mov, i) {
     const type = mov > 0 ? "deposit" : "withdrawal";
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">
         ${i + 1} ${type}</div>
-        <div class="movements__value">${mov}€</div>
+        <div class="movements__value">${mov}\$</div>
       </div>
     `;
     containerMovements.insertAdjacentHTML("afterbegin", html);
@@ -77,7 +90,39 @@ const displayMovments = function(movements) {
 };
 displayMovments(account1.movements);
 
-/////////////////////////////////////////////////
+const calcDisplayBalance = function(movements) {
+  const balance = movements.reduce((acc, current) => acc + current, 0);
+  // Update UI
+  labelBalance.textContent = `${balance}\$`;
+};
+calcDisplayBalance(account1.movements);
+// Note:  0 is the inital value - the 2nd parameter of reduce method
+// array.reduce(function(acc, currentValue, currentIndex, arr), initialValue)
+
+const calcDisplaySummary = function(movements) {
+  const incomes = movements
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumIn.textContent = `${incomes}﹩`;
+
+  const outcomes = movements
+    .filter(mov => mov < 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumOut.textContent = `${Math.abs(outcomes)}﹩`;
+
+  // interest (1.2): ex. 500 * 1.2 / 100 = 6
+  const interest = movements
+    .filter(mov => mov > 0)
+    .map(deposit => (deposit * 1.2) / 100)
+    .filter(int => int > 1) // exclude intrests less than $1
+    .reduce((acc, int) => acc + int, 0);
+  labelSumInterest.textContent = `${interest}﹩`;
+};
+calcDisplaySummary(account1.movements);
+
+const max = Math.max(...account1.movements);
+console.log(max);
+
 /////////////////////////////////////////////////
 // LECTURES
 
@@ -88,5 +133,8 @@ const currencies = new Map([
 ]);
 
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
+const deposits = movements.filter(mov => mov > 0);
+const withdrawals = movements.filter(mov => mov < 0);
 
 /////////////////////////////////////////////////
