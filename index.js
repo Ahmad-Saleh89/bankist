@@ -89,10 +89,10 @@ const displayMovments = function(movements) {
   });
 };
 
-const calcDisplayBalance = function(movements) {
-  const balance = movements.reduce((acc, current) => acc + current, 0);
+const calcDisplayBalance = function(acc) {
+  acc.balance = acc.movements.reduce((acc, current) => acc + current, 0);
   // Update UI
-  labelBalance.textContent = `${balance}\$`;
+  labelBalance.textContent = `${acc.balance}\$`;
 };
 
 // Note:  0 is the inital value - the 2nd parameter of reduce method
@@ -119,24 +119,22 @@ const calcDisplaySummary = function(acc) {
   labelSumInterest.textContent = `${interest}﹩`;
 };
 
-// find() method returns the first element that passes a test
-const account = accounts.find(acct => acct.owner === "Jessica Davis");
-console.log(account);
+const updateUI = account => {
+  displayMovments(account.movements); // Display movements
+  calcDisplayBalance(account); // Display balance
+  calcDisplaySummary(account); // Display summary
+};
 
-// Event Handler:
-// Login
+// Event Handler: - Login
 let currentAccount;
 btnLogin.addEventListener("click", function(event) {
   event.preventDefault();
-  console.log("Login");
   // find the user that matches the input
   currentAccount = accounts.find(
     acc => acc.username === inputLoginUsername.value
   );
-  // Check if account actually exists using the (?)
+  // Check if account actually exists using the optional chaining (?)
   if (currentAccount?.pin === Number(inputLoginPin.value)) {
-    console.log("Login success!");
-    console.log(currentAccount);
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(" ")[0]
     }`;
@@ -146,9 +144,51 @@ btnLogin.addEventListener("click", function(event) {
     inputLoginUsername.value = inputLoginPin.value = "";
     inputLoginPin.blur(); // lose focus
 
-    displayMovments(currentAccount.movements);
-    calcDisplayBalance(currentAccount.movements);
-    calcDisplaySummary(currentAccount);
+    updateUI(currentAccount);
+
+    console.log(currentAccount);
+  }
+});
+
+// Transfer amounts from an account to another
+btnTransfer.addEventListener("click", function(e) {
+  e.preventDefault();
+  const amount = Number(inputTransferAmount.value);
+  // find() method returns the first element that passes a test
+  const receiverAcc = accounts.find(
+    acc => acc.username === inputTransferTo.value
+  );
+  inputTransferAmount.value = inputTransferTo.value = "";
+
+  if (
+    amount > 0 &&
+    receiverAcc &&
+    currentAccount.balance >= amount &&
+    receiverAcc?.username !== currentAccount.username
+  ) {
+    currentAccount.movements.push(-amount);
+    receiverAcc.movements.push(amount);
+    updateUI(currentAccount);
+  }
+});
+
+btnClose.addEventListener("click", function(e) {
+  e.preventDefault();
+  if (
+    inputCloseUsername.value === currentAccount.username &&
+    Number(inputClosePin.value) === currentAccount.pin
+  ) {
+    // Loop throgh accounts array and find the user
+    // The findIndex() method returns the index of the first element in an array that pass a test
+    const index = accounts.findIndex(
+      acc => acc.username === currentAccount.username
+    );
+    // Delete account
+    accounts.splice(index, 1);
+
+    // Hide UI
+    containerApp.style.opacity = 0;
+    inputCloseUsername.value = inputClosePin.value = "";
   }
 });
 
@@ -163,10 +203,5 @@ const currencies = new Map([
   ["EUR", "Euro"],
   ["GBP", "Pound sterling"]
 ]);
-
-const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
-
-const deposits = movements.filter(mov => mov > 0);
-const withdrawals = movements.filter(mov => mov < 0);
 
 /////////////////////////////////////////////////
