@@ -7,7 +7,7 @@ import "./style.css";
 
 // Data
 const account1 = {
-  owner: "Jonas Schmedtmann",
+  owner: "Ahmad Saleh",
   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
   interestRate: 1.2, // %
   pin: 1111
@@ -88,45 +88,69 @@ const displayMovments = function(movements) {
     containerMovements.insertAdjacentHTML("afterbegin", html);
   });
 };
-displayMovments(account1.movements);
 
 const calcDisplayBalance = function(movements) {
   const balance = movements.reduce((acc, current) => acc + current, 0);
   // Update UI
   labelBalance.textContent = `${balance}\$`;
 };
-calcDisplayBalance(account1.movements);
+
 // Note:  0 is the inital value - the 2nd parameter of reduce method
 // array.reduce(function(acc, currentValue, currentIndex, arr), initialValue)
 
 // filter - map - reduce
-const calcDisplaySummary = function(movements) {
-  const incomes = movements
+const calcDisplaySummary = function(acc) {
+  const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
   labelSumIn.textContent = `${incomes}﹩`;
 
-  const outcomes = movements
+  const outcomes = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
   labelSumOut.textContent = `${Math.abs(outcomes)}﹩`;
 
   // interest (1.2): ex. 500 * 1.2 / 100 = 6
-  const interest = movements
+  const interest = acc.movements
     .filter(mov => mov > 0)
-    .map(deposit => (deposit * 1.2) / 100)
+    .map(deposit => (deposit * acc.interestRate) / 100)
     .filter(int => int > 1) // exclude intrests less than $1
     .reduce((acc, int) => acc + int, 0);
   labelSumInterest.textContent = `${interest}﹩`;
 };
-calcDisplaySummary(account1.movements);
 
 // find() method returns the first element that passes a test
 const account = accounts.find(acct => acct.owner === "Jessica Davis");
 console.log(account);
 
 // Event Handler:
-// Login 
+// Login
+let currentAccount;
+btnLogin.addEventListener("click", function(event) {
+  event.preventDefault();
+  console.log("Login");
+  // find the user that matches the input
+  currentAccount = accounts.find(
+    acc => acc.username === inputLoginUsername.value
+  );
+  // Check if account actually exists using the (?)
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    console.log("Login success!");
+    console.log(currentAccount);
+    labelWelcome.textContent = `Welcome back, ${
+      currentAccount.owner.split(" ")[0]
+    }`;
+    containerApp.style.opacity = 100;
+
+    // Clear input fields
+    inputLoginUsername.value = inputLoginPin.value = "";
+    inputLoginPin.blur(); // lose focus
+
+    displayMovments(currentAccount.movements);
+    calcDisplayBalance(currentAccount.movements);
+    calcDisplaySummary(currentAccount);
+  }
+});
 
 // const max = Math.max(...account1.movements);
 // console.log(max);
