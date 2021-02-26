@@ -227,3 +227,21 @@ const currencies = new Map([
 ]);
 
 /////////////////////////////////////////////////
+// ----- flat() - flatMap()
+const movements = accounts.map(acc => acc.movements);
+console.log(movements);
+
+const allMovements = movements.flat();
+console.log(allMovements);
+
+const overallBalance = accounts
+  .map(acc => acc.movements)
+  .flat()
+  .reduce((acc, mov) => acc + mov, 0);
+console.log(overallBalance);
+
+// flatMap is a combination of map and flat(1)
+const overallBalance2 = accounts
+  .flatMap(acc => acc.movements)
+  .reduce((acc, mov) => acc + mov, 0);
+console.log(overallBalance2);
