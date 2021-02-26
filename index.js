@@ -74,9 +74,13 @@ const createUsername = function(accounts) {
 };
 createUsername(accounts);
 
-const displayMovments = function(movements) {
+const displayMovments = function(movements, sort = false) {
   containerMovements.innerHTML = "";
-  movements.forEach(function(mov, i) {
+
+  // we use slice() to make a copy of the original array
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  movs.forEach(function(mov, i) {
     const type = mov > 0 ? "deposit" : "withdrawal";
     const html = `
       <div class="movements__row">
@@ -205,6 +209,13 @@ btnLoan.addEventListener("click", function(e) {
     updateUI(currentAccount);
     inputLoanAmount.value = "";
   }
+});
+
+let sorted = false;
+btnSort.addEventListener("click", function(e) {
+  e.preventDefault();
+  displayMovments(currentAccount.movements, !sorted);
+  sorted = !sorted;
 });
 
 // const max = Math.max(...account1.movements);
