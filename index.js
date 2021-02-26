@@ -172,6 +172,7 @@ btnTransfer.addEventListener("click", function(e) {
   }
 });
 
+// Close an account
 btnClose.addEventListener("click", function(e) {
   e.preventDefault();
   if (
@@ -192,8 +193,29 @@ btnClose.addEventListener("click", function(e) {
   }
 });
 
+// Request a loan
+btnLoan.addEventListener("click", function(e) {
+  e.preventDefault();
+  const amount = Number(inputLoanAmount.value);
+  // Accept loans only if any deposit >= 10% of the request
+  // for example: I can request 10,000 if I have at least 1000 as a deposit
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
+    // Add movement
+    currentAccount.movements.push(amount);
+    updateUI(currentAccount);
+    inputLoanAmount.value = "";
+  }
+});
+
 // const max = Math.max(...account1.movements);
 // console.log(max);
+
+// includes - some - every
+console.log(account1.movements.includes(-130));
+// The some() method checks if any of the elements in an array pass a test
+console.log(account1.movements.some(mov => mov > 1000));
+// The every() method checks if all elements in an array pass a test
+console.log(account1.movements.every(mov => mov > 0));
 
 /////////////////////////////////////////////////
 // LECTURES
