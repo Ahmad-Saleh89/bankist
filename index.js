@@ -134,6 +134,7 @@ let currentAccount;
 btnLogin.addEventListener("click", function(event) {
   event.preventDefault();
   // find the user that matches the input
+  // find() method returns the first element that passes a test
   currentAccount = accounts.find(
     acc => acc.username === inputLoginUsername.value
   );
