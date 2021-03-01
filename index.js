@@ -266,6 +266,7 @@ console.log(overallBalance2);
  * Syntax: Array.from(arrayLike, mapFn, thisArg)
  */
 // Create an array from a NodeList
+// querySelectorAll does NOT create an array. It creates a NodeList
 labelBalance.addEventListener("click", function() {
   const movementsUI = Array.from(
     document.querySelectorAll(".movements__value"),
