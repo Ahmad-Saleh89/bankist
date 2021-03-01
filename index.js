@@ -256,3 +256,26 @@ const overallBalance2 = accounts
   .flatMap(acc => acc.movements)
   .reduce((acc, mov) => acc + mov, 0);
 console.log(overallBalance2);
+
+///////////////////////////////////////
+// ---- Array.from() -------/
+/**
+ * Array.from() lets you create Arrays from:
+ * array-like objects (objects with a length property and indexed elements); or
+ * iterable objects (objects such as Map and Set).
+ * Syntax: Array.from(arrayLike, mapFn, thisArg)
+ */
+// Create an array from a NodeList
+labelBalance.addEventListener("click", function() {
+  const movementsUI = Array.from(
+    document.querySelectorAll(".movements__value"),
+    el => Number(el.textContent.replace("$", ""))
+  );
+  console.log(movementsUI);
+
+  // OR you can do this:
+  const movementsUI2 = [...document.querySelectorAll(".movements__value")].map(
+    el => Number(el.textContent.replace("$", ""))
+  );
+  console.log(movementsUI2);
+});
