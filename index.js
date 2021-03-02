@@ -281,3 +281,61 @@ labelBalance.addEventListener("click", function() {
   );
   console.log(movementsUI2);
 });
+
+// More on Array methods
+// Ex. 1 Calculate all the deposits
+const bankDepositSum = accounts
+  .flatMap(acc => acc.movements)
+  .filter(mov => mov > 0)
+  .reduce((sum, cur) => sum + cur, 0);
+console.log(bankDepositSum);
+
+// Ex. 2 Count how many movements >= 1000
+/**
+ * The initial value of the accumulator is 0 (sum = 0)
+ * if the cur >= 1000 add 1 to the sum
+ * ++sum is different than sum++
+ * See exampl bellow
+ */
+const numDeposits1000 = accounts
+  .flatMap(acc => acc.movements)
+  .reduce((sum, cur) => (cur >= 1000 ? ++sum : sum), 0);
+console.log(numDeposits1000); // 6
+
+// ------ THE prefixed ++ Operator -------- //
+let plus = 1;
+console.log(plus++); // still 1
+console.log(++plus); // It's 3 now
+// the plus++ increments 1 but it doesn't return the new value
+// However, the ++plus increments and returns the new value
+
+// Ex. 3 Create an obj that contains the sum of the deposits and the sum of withdrawals
+// Here the initial value is an object
+const { deposits, withdrawals } = accounts
+  .flatMap(acc => acc.movements)
+  .reduce(
+    (sum, cur) => {
+      // cur > 0 ? (sum.deposits += cur) : (sum.withdrawls += -cur);  // OR:
+      sum[cur > 0 ? "deposits" : "withdrawals"] += Math.abs(cur);
+      return sum;
+    },
+    { deposits: 0, withdrawals: 0 }
+  );
+console.log(deposits, withdrawals);
+
+//. Ex. 4
+const convertTitleCase = function(title) {
+  const exceptions = ["a", "an", "and", "the", "but", "or", "on", "in", "with"];
+  const capitalize = str => str[0].toUpperCase() + str.slice(1);
+
+  title = title
+    .toLowerCase()
+    .split(" ")
+    .map(word => (exceptions.includes(word) ? word : capitalize(word)))
+    .join(" ");
+
+  return title;
+};
+console.log(convertTitleCase("this is a nice title"));
+console.log(convertTitleCase("this is a LONG title but not too long"));
+console.log(convertTitleCase("and here is another title with an EXAMPLE"));
