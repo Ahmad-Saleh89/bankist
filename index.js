@@ -86,7 +86,7 @@ const displayMovments = function(movements, sort = false) {
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">
         ${i + 1} ${type}</div>
-        <div class="movements__value">${mov}\$</div>
+        <div class="movements__value">${mov.toFixed(2)}\$</div>
       </div>
     `;
     containerMovements.insertAdjacentHTML("afterbegin", html);
@@ -96,7 +96,7 @@ const displayMovments = function(movements, sort = false) {
 const calcDisplayBalance = function(acc) {
   acc.balance = acc.movements.reduce((acc, current) => acc + current, 0);
   // Update UI
-  labelBalance.textContent = `${acc.balance}\$`;
+  labelBalance.textContent = `${acc.balance.toFixed(2)}\$`;
 };
 
 // Note:  0 is the inital value - the 2nd parameter of reduce method
@@ -107,12 +107,12 @@ const calcDisplaySummary = function(acc) {
   const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes}﹩`;
+  labelSumIn.textContent = `${incomes.toFixed(2)}﹩`;
 
   const outcomes = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(outcomes)}﹩`;
+  labelSumOut.textContent = `${Math.abs(outcomes).toFixed(2)}﹩`;
 
   // interest (1.2): ex. 500 * 1.2 / 100 = 6
   const interest = acc.movements
@@ -120,7 +120,7 @@ const calcDisplaySummary = function(acc) {
     .map(deposit => (deposit * acc.interestRate) / 100)
     .filter(int => int > 1) // exclude intrests less than $1
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest}﹩`;
+  labelSumInterest.textContent = `${interest.toFixed(2)}﹩`;
 };
 
 const updateUI = account => {
@@ -201,7 +201,7 @@ btnClose.addEventListener("click", function(e) {
 // Request a loan
 btnLoan.addEventListener("click", function(e) {
   e.preventDefault();
-  const amount = Number(inputLoanAmount.value);
+  const amount = Math.floor(inputLoanAmount.value);
   // Accept loans only if any deposit >= 10% of the request
   // for example: I can request 10,000 if I have at least 1000 as a deposit
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
